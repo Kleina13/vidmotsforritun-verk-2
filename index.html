@@ -1,83 +1,99 @@
+<!--
+THE GUNNAR BOX
+made by me
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>verk-2</title>
+    <title>The Gunnar Box</title>
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
 
+    <!-- imports -->
     <script src="https://threejs.org/build/three.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.2/TweenMax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.2/TweenMax.min.js"></script> 
+    
+    
+    <script type="module">
 
-    <script>
+        var scene = new THREE.Scene(); // Býr til scene
 
-        var scene = new THREE.Scene();
+        // Býr til cameru og staðsetur hana á 0/0/3 = x/y/z
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .1, 1000) 
+        camera.position.set(0, 0, 3)
 
-        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-        camera.position.z = 3;
+        // Býr til rendererinn
+        var renderer = new THREE.WebGLRenderer({ antialias: true }) // Býr renderinn til með antialiasing á 
+        renderer.setClearColor("#420dab") // Setur frekar svalann bakrunslit
+        renderer.setSize(window.innerWidth, window.innerHeight) // Setur stærð skjásins sem stærð browsersins
 
-        var renderer = new THREE.WebGLRenderer({antialias: true})
-        renderer.setClearColor("#420dab")
-        renderer.setSize(window.innerWidth, window.innerHeight)
-
-        document.body.appendChild(renderer.domElement);
+        document.body.appendChild(renderer.domElement); // Appendar renderinn inn htmlið undir öllu öðru
 
         var raycaster = new THREE.Raycaster();
         var mouse = new THREE.Vector2();
 
-        var geometry = new THREE.BoxGeometry(1, 1, 1);
-        var texture = new THREE.TextureLoader().load( 'gunnar.jpg' );
-        var material = new THREE.MeshLambertMaterial( {map: texture} );
-        var mesh = new THREE.Mesh(geometry, material);
+        var geometry = new THREE.BoxGeometry(1, 1, 1); // Býr till 3d kassa object variable
+        var texture = new THREE.TextureLoader().load( 'gunnar.jpg' ); // Loadar gunnar.jpg í variable sem texture object
+        var material = new THREE.MeshLambertMaterial({ map: texture }); // Býr til object úr material sem nýtir skugga og mappar texture variablið
+        var the_gunnar_cube = new THREE.Mesh(geometry, material); // Býr til variable úr kassa objectinu og materialinu sem er gert úr texturinu
 
-        scene.add(mesh);
+        scene.add(the_gunnar_cube); // Bætir kassanum í scenið
 
+        // Ljós 1                         hvítur
         var light = new THREE.PointLight(0xFFFFFF, 1, 500);
-        light.position.set(8, 0, 13);
-        scene.add(light);
+        light.position.set(  8,  0, 13); // Setur ljósuð á þennan púnkt
+        scene.add(light); // Bætir síðan ljósinu í senuna
 
+        // Ljós 2                         hvítur
         var light = new THREE.PointLight(0xFFFFFF, 1, 500);
-        light.position.set(-8, 0, 25);
-        scene.add(light);
+        light.position.set( -8,  0, 25); // Setur ljósuð á þennan púnkt
+        scene.add(light); // Bætir síðan ljósinu í senuna
 
+        // Render function sem er svona main thingið
         var render = () => {
-            requestAnimationFrame(render);
+            requestAnimationFrame(render); // Callar þetta animation frame
+            // Þetta er honestly smá flókið enn það virkar
 
-            mesh.rotation.y += .02;
-            mesh.rotation.x -= .01;
+            // Færir kassann 
+            the_gunnar_cube.rotation.y += .02; // Y axis
+            the_gunnar_cube.rotation.x -= .01; // X axis
             
-            
-
-
-            renderer.render(scene, camera);
+            renderer.render(scene, camera); // Renderar scenið með camerunni
         }
 
+        // Þegar smellt er á kassann
         window.addEventListener('click', (event) => {
-            event.preventDefault();
+            event.preventDefault(); // Skippar deafult on click sem browserinn gerir
 
+            // Finnur músina
             mouse.x =   ( event.clientX / window.innerWidth  ) * 2 - 1;
             mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
             raycaster.setFromCamera(mouse, camera);
 
+            // For loopa í gegnum alla kassana sem voru smelltir á (currently er bara einn samt)
             var intersects = raycaster.intersectObjects(scene.children, true);
             for (let i = 0; i < intersects.length; i++) {
-                this.tl = new TimelineMax();
-                this.tl.to(intersects[i].object.scale, 1, {x: 1.5, y:1.5, z:1.5, ease: Expo.easeInOut});
-                this.tl.to(intersects[i].object.scale, 2, {x: 1,   y:1,   z:1  , ease: Expo.easeInOut});
+                this.tl = new TimelineMax(); // Býr til nýtt animation TimeLine
+                this.tl.to(intersects[i].object.scale, 1, {x: 1.5, y:1.5, z:1.5, ease: Expo.easeInOut}); // Stækkar kassa
+                this.tl.to(intersects[i].object.scale, 2, {x: 1,   y:1,   z:1  , ease: Expo.easeInOut}); // Minkar kassa
             }
         });
 
-        window.addEventListener('resize', () => {
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            camera.aspect = window.innerWidth / window.innerHeight;
 
-            camera.updateProjectionMatrix();
+        // Þegar gluggin er endurstækkaður
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight); // Setur nýju stærð
+            camera.aspect = window.innerWidth / window.innerHeight; // Setur nýju myndavél
+
+            camera.updateProjectionMatrix(); // update function fyrir cameruna
         });
 
-        render();
+        render(); // render
         
     </script>
 
