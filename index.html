@@ -22,7 +22,7 @@ made by me
 
         var scene = new THREE.Scene(); // Býr til scene
 
-        // Býr til cameru og staðsetur hana á 0/0/3 = x/y/z
+        // Býr til cameru og staðsetur hana á 0/0/-3 = x/y/z
         var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .1, 1000) 
         camera.position.set(0, 0, 3)
 
@@ -59,14 +59,14 @@ made by me
             // Þetta er honestly smá flókið enn það virkar
 
             // Færir kassann 
-            the_gunnar_cube.rotation.y += .02; // Y axis
-            the_gunnar_cube.rotation.x -= .01; // X axis
+            the_gunnar_cube.rotation.y -= .02; // Y axis
+            the_gunnar_cube.rotation.x += .01; // X axis
             
             renderer.render(scene, camera); // Renderar scenið með camerunni
         }
 
         // Þegar smellt er á kassann
-        window.addEventListener('click', (event) => {
+        window.addEventListener('click', function(event) {
             event.preventDefault(); // Skippar deafult on click sem browserinn gerir
 
             // Finnur músina
